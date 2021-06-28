@@ -4,21 +4,31 @@
 import PackageDescription
 
 let package = Package(
-    name: "naveridlogin-sdk-ios",
-    platforms: [.iOS(.v11)],
-//    products: [
-//        .library(
-//            name: "naveridlogin-sdk-ios",
-//            targets: ["naveridlogin-sdk-ios"]),
-//    ],
-//    dependencies: [
+    name: "NaverLogin",
+    platforms: [.iOS(.v11), .macOS(.v10_12)],
+    products: [
+        .library(
+            name: "NaverThirdPartyLoginTarget",
+            targets: ["NaverThirdPartyLoginTarget"]),
+    ],
+    dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-//    ],
+    ],
     targets: [
         .target(
-            name: "naveridlogin-sdk-ios",
-            dependencies: [],
-            path: "./"),
+          name: "NaverThirdPartyLoginTarget",
+          dependencies: [.target(name: "NaverThirdPartyLoginWrapper",
+                                 condition: .when(platforms: [.iOS]))],
+          path: "SwiftPM-PlatformExclude/NaverThirdPartyLoginWrap"
+        ),
+        .target(
+          name: "NaverThirdPartyLoginWrapper",
+          dependencies: [
+            .target(name: "NaverThirdPartyLogin", condition: .when(platforms: [.iOS])),
+          ],
+          path: "NaverThirdPartyLoginWrapper"
+        ),
+        .binaryTarget(name: "NaverThirdPartyLogin", path: "NaverThirdPartyLogin.xcframework")
     ]
 )
